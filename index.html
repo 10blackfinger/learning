@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#6366f1">
+<title>دراستي | منصتك الاحترافية للمذاكرة الذكية</title>
+<meta name="description" content="موقع تفاعلي يساعد الطلاب على المذاكرة بذكاء: نصائح، مؤقت بومودورو، قائمة مهام، بطاقات مراجعة، وعدّاد للامتحانات.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ===================== المتغيرات والأساسيات ===================== */
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:#f4f7fc;
+  --bg-soft:#eaf0fb;
+  --surface:#ffffff;
+  --surface-2:#f1f5ff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --primary:#6366f1;
+  --primary-2:#8b5cf6;
+  --accent:#06b6d4;
+  --success:#10b981;
+  --danger:#ef4444;
+  --warning:#f59e0b;
+  --shadow:0 12px 34px -16px rgba(15,23,42,.30);
+  --shadow-sm:0 6px 18px -10px rgba(15,23,42,.28);
+  --radius:20px;
+  --radius-sm:14px;
+  --grad:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#06b6d4 100%);
+}
+
+[data-theme="dark"]{
+  --bg:#0a0f1e;
+  --bg-soft:#0f1730;
+  --surface:#131b30;
+  --surface-2:#1a2440;
+  --text:#e8eefc;
+  --muted:#93a3bd;
+  --border:#25314f;
+  --shadow:0 12px 34px -16px rgba(0,0,0,.75);
+  --shadow-sm:0 6px 18px -10px rgba(0,0,0,.7);
+}
+
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Cairo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.75;
+  overflow-x:hidden;
+  transition:background .4s ease,color .4s ease;
+  -webkit-font-smoothing:antialiased;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(99,102,241,.16), transparent 42%),
+    radial-gradient(circle at 88% 4%, rgba(6,182,212,.14), transparent 40%),
+    radial-gradient(circle at 50% 100%, rgba(139,92,246,.12), transparent 50%);
+  pointer-events:none;
+  z-index:0;
+}
+
+.container{
+  width:min(1180px,92%);
+  margin-inline:auto;
+  position:relative;
+  z-index:1;
+}
+
+#scrollProgress{
+  position:fixed;
+  top:0;right:0;
+  height:4px;
+  width:0%;
+  background:var(--grad);
+  z-index:1000;
+  border-radius:0 0 6px 6px;
+  transition:width .1s linear;
+}
+
+/* ===================== الشريط العلوي ===================== */
+header{
+  position:sticky;
+  top:0;
+  z-index:900;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  background:var(--surface);
+  background:color-mix(in srgb,var(--surface) 78%,transparent);
+  border-bottom:1px solid var(--border);
+  transition:background .4s,box-shadow .3s;
+}
+header.scrolled{box-shadow:var(--shadow-sm);}
+
+.nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px 0;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:1.18rem;
+  letter-spacing:-.3px;
+  white-space:nowrap;
+}
+.logo-icon{
+  width:42px;height:42px;
+  display:grid;place-items:center;
+  border-radius:13px;
+  background:var(--grad);
+  color:#fff;
+  font-size:1.2rem;
+  box-shadow:0 8px 20px -8px rgba(99,102,241,.9);
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+.logo span b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  list-style:none;
+  flex-wrap:wrap;
+}
+.nav-links a{
+  text-decoration:none;
+  color:var(--muted);
+  font-weight:600;
+  font-size:.92rem;
+  padding:8px 14px;
+  border-radius:11px;
+  transition:.25s;
+  display:block;
+}
+.nav-links a:hover{color:var(--primary);background:var(--surface-2);}
+
+.nav-actions{display:flex;align-items:center;gap:10px;}
+
+.theme-btn{
+  width:44px;height:44px;
+  border-radius:13px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text);
+  cursor:pointer;
+  font-size:1.15rem;
+  display:grid;place-items:center;
+  transition:.3s;
+}
+.theme-btn:hover{transform:rotate(-18deg) scale(1.08);border-color:var(--primary);}
+
+.menu-btn{display:none;}
+
+/* ===================== الهيرو ===================== */
+.hero{
+  padding:80px 0 60px;
+  text-align:center;
+  position:relative;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 18px;
+  border-radius:100px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--primary);
+  box-shadow:var(--shadow-sm);
+  margin-bottom:24px;
+}
+.badge .dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--success);
+  box-shadow:0 0 0 0 rgba(16,185,129,.6);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}
+  70%{box-shadow:0 0 0 12px rgba(16,185,129,0)}
+  100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}
+}
+
+.hero h1{
+  font-size:clamp(2rem,5.2vw,3.6rem);
+  font-weight:900;
+  line-height:1.35;
+  letter-spacing:-1px;
+  margin-bottom:20px;
+}
+.hero h1 em{
+  font-style:normal;
+  background:var(--grad);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  position:relative;
+}
+.hero p{
+  max-width:640px;
+  margin:0 auto 34px;
+  color:var(--muted);
+  font-size:clamp(.98rem,2vw,1.13rem);
+  font-weight:400;
+}
+
+.hero-btns{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:56px;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:14px 30px;
+  border-radius:14px;
+  font-family:inherit;
+  font-weight:700;
+  font-size:.98rem;
+  cursor:pointer;
+  border:none;
+  text-decoration:none;
+  transition:.28s cubic-bezier(.4,0,.2,1);
+}
+.btn-primary{
+  background:var(--grad);
+  color:#fff;
+  box-shadow:0 14px 30px -12px rgba(99,102,241,.85);
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 20px 38px -14px rgba(99,102,241,.95);}
+.btn-ghost{
+  background:var(--surface);
+  color:var(--text);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+}
+.btn-ghost:hover{transform:translateY(-3px);border-color:var(--primary);color:var(--primary);}
+
+.hero-stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:16px;
+  max-width:760px;
+  margin-inline:auto;
+}
+.stat{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:20px 12px;
+  box-shadow:var(--shadow-sm);
+  transition:.3s;
+}
+.stat:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
+.stat .num{
+  font-size:1.85rem;
+  font-weight:900;
+  background:var(--grad);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  line-height:1.2;
+}
+.stat .lbl{font-size:.83rem;color:var(--muted);font-weight:600;}
+
+/* ===================== عناوين الأقسام ===================== */
+section{padding:70px 0;scroll-margin-top:90px;}
+
+.sec-head{text-align:center;margin-bottom:46px;}
+.sec-tag{
+  display:inline-block;
+  padding:6px 16px;
+  border-radius:100px;
+  background:var(--surface-2);
+  color:var(--primary);
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.4px;
+  margin-bottom:14px;
+  border:1px solid var(--border);
+}
+.sec-head h2{
+  font-size:clamp(1.55rem,3.6vw,2.3rem);
+  font-weight:900;
+  letter-spacing:-.7px;
+  margin-bottom:12px;
+}
+.sec-head p{color:var(--muted);max-width:600px;margin-inline:auto;font-size:.98rem;}
+
+/* ===================== النصائح ===================== */
+.filters{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:36px;
+}
+.chip{
+  padding:9px 20px;
+  border-radius:100px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--muted);
+  font-family:inherit;
+  font-size:.88rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:.28s;
+}
+.chip:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);}
+.chip.active{
+  background:var(--grad);
+  color:#fff;
+  border-color:transparent;
+  box-shadow:0 10px 24px -10px rgba(99,102,241,.85);
+}
+
+.tips-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:22px;
+}
+
+.tip{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:26px 22px;
+  box-shadow:var(--shadow-sm);
+  position:relative;
+  overflow:hidden;
+  animation:tipIn .55s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes tipIn{
+  from{opacity:0;transform:translateY(22px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.tip::after{
+  content:"";
+  position:absolute;
+  inset-inline-start:0;top:0;
+  width:4px;height:100%;
+  background:var(--grad);
+  transform:scaleY(0);
+  transform-origin:top;
+  transition:transform .4s;
+}
+.tip:hover{
+  transform:translateY(-7px);
+  box-shadow:var(--shadow);
+  border-color:var(--primary);
+  border-color:color-mix(in srgb,var(--primary) 42%,transparent);
+}
+.tip:hover::after{transform:scaleY(1);}
+
+.tip-icon{
+  width:54px;height:54px;
+  border-radius:16px;
+  display:grid;place-items:center;
+  font-size:1.55rem;
+  margin-bottom:16px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  transition:.35s;
+}
+.tip:hover .tip-icon{transform:rotate(-8deg) scale(1.08);}
+
+.tip h3{font-size:1.06rem;font-weight:800;margin-bottom:8px;}
+.tip p{font-size:.9rem;color:var(--muted);line-height:1.85;}
+
+.tip .tag{
+  display:inline-block;
+  margin-top:14px;
+  font-size:.72rem;
+  font-weight:800;
+  padding:4px 12px;
+  border-radius:100px;
+  background:color-mix(in srgb,var(--primary) 12%,transparent);
+  background:var(--surface-2);
+  color:var(--primary);
+}
+
+/* ===================== مؤقت بومودورو ===================== */
+.timer-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:28px;
+  padding:44px 28px 38px;
+  box-shadow:var(--shadow);
+  max-width:720px;
+  margin-inline:auto;
+  text-align:center;
+}
+
+.modes{
+  display:inline-flex;
+  gap:6px;
+  padding:6px;
+  border-radius:100px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  margin-bottom:34px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.mode{
+  padding:9px 20px;
+  border:none;
+  background:transparent;
+  border-radius:100px;
+  font-family:inherit;
+  font-size:.88rem;
+  font-weight:700;
+  color:var(--muted);
+  cursor:pointer;
+  transition:.28s;
+}
+.mode.active{
+  background:var(--surface);
+  color:var(--primary);
+  box-shadow:var(--shadow-sm);
+}
+
+.timer-wrap{
+  position:relative;
+  width:min(300px,80vw);
+  aspect-ratio:1;
+  margin:0 auto 30px;
+}
+.ring{width:100%;height:100%;transform:rotate(-90deg);}
+.ring-bg{
+  fill:none;
+  stroke:var(--surface-2);
+  stroke-width:14;
+}
+.ring-progress{
+  fill:none;
+  stroke:url(#gradStroke);
+  stroke-width:14;
+  stroke-linecap:round;
+  transition:stroke-dashoffset .35s linear;
+  filter:drop-shadow(0 0 10px rgba(99,102,241,.55));
+}
+
+.timer-content{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+#timerDisplay{
+  font-size:clamp(2.6rem,8vw,3.6rem);
+  font-weight:900;
+  letter-spacing:-2px;
+  font-variant-numeric:tabular-nums;
+  line-height:1;
+}
+#timerLabel{font-size:.86rem;font-weight:700;color:var(--muted);}
+#sessionCount{
+  font-size:.76rem;
+  font-weight:800;
+  color:var(--primary);
+  background:var(--surface-2);
+  padding:3px 14px;
+  border-radius:100px;
+  margin-top:8px;
+}
+
+.timer-btns{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.t-btn{
+  padding:13px 34px;
+  border-radius:14px;
+  font-family:inherit;
+  font-weight:800;
+  font-size:.95rem;
+  cursor:pointer;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text);
+  transition:.28s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.t-btn:hover{transform:translateY(-2px);border-color:var(--primary);color:var(--primary);}
+.t-btn.main{
+  background:var(--grad);
+  color:#fff;
+  border:none;
+  box-shadow:0 14px 30px -12px rgba(99,102,241,.9);
+}
+.t-btn.main:hover{color:#fff;transform:translateY(-3px) scale(1.02);}
+
+/* ===================== المهام ===================== */
+.tasks-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:30px 26px;
+  box-shadow:var(--shadow);
+  max-width:760px;
+  margin-inline:auto;
+}
+
+.task-input-row{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
+.task-input-row input{
+  flex:1;
+  min-width:180px;
+  padding:14px 18px;
+  border-radius:13px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text);
+  font-family:inherit;
+  font-size:.95rem;
+  outline:none;
+  transition:.28s;
+}
+.task-input-row input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 16%,transparent);
+}
+.task-input-row input::placeholder{color:var(--muted);}
+
+.add-btn{
+  padding:14px 26px;
+  border-radius:13px;
+  border:none;
+  background:var(--grad);
+  color:#fff;
+  font-family:inherit;
+  font-weight:800;
+  font-size:.93rem;
+  cursor:pointer;
+  transition:.28s;
+  box-shadow:0 12px 26px -12px rgba(99,102,241,.9);
+}
+.add-btn:hover{transform:translateY(-2px) scale(1.03);}
+
+.progress-wrap{margin-bottom:22px;}
+.progress-top{
+  display:flex;
+  justify-content:space-between;
+  font-size:.82rem;
+  font-weight:700;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+.progress-bar{
+  height:10px;
+  border-radius:100px;
+  background:var(--surface-2);
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  border-radius:100px;
+  background:var(--grad);
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+
+#taskList{list-style:none;display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto;padding-inline-end:4px;}
+#taskList::-webkit-scrollbar{width:6px;}
+#taskList::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+
+.task{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  border-radius:13px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  transition:.28s;
+  animation:slideIn .35s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:translateX(0)}}
+.task:hover{border-color:var(--primary);transform:translateX(-3px);}
+
+.task input[type="checkbox"]{
+  appearance:none;
+  width:22px;height:22px;
+  border-radius:7px;
+  border:2px solid var(--border);
+  background:var(--surface);
+  cursor:pointer;
+  flex-shrink:0;
+  position:relative;
+  transition:.25s;
+}
+.task input[type="checkbox"]:checked{
+  background:var(--grad);
+  border-color:transparent;
+}
+.task input[type="checkbox"]:checked::after{
+  content:"✓";
+  position:absolute;
+  inset:0;
+  display:grid;place-items:center;
+  color:#fff;
+  font-size:.8rem;
+  font-weight:900;
+}
+
+.task span{
+  flex:1;
+  font-size:.93rem;
+  font-weight:600;
+  word-break:break-word;
+  transition:.3s;
+}
+.task.done span{text-decoration:line-through;color:var(--muted);opacity:.65;}
+
+.del-btn{
+  background:transparent;
+  border:none;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:1.05rem;
+  padding:5px 8px;
+  border-radius:8px;
+  transition:.25s;
+  flex-shrink:0;
+}
+.del-btn:hover{color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,transparent);}
+
+.empty{
+  text-align:center;
+  padding:34px 12px;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.empty .big{font-size:2.4rem;display:block;margin-bottom:8px;opacity:.7;}
+
+.task-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:18px;
+  padding-top:16px;
+  border-top:1px dashed var(--border);
+  font-size:.83rem;
+  color:var(--muted);
+  font-weight:700;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.clear-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+  padding:7px 16px;
+  border-radius:10px;
+  font-family:inherit;
+  font-size:.8rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:.25s;
+}
+.clear-btn:hover{color:var(--danger);border-color:var(--danger);}
+
+/* ===================== البطاقات التعليمية ===================== */
+.flash-wrap{max-width:660px;margin-inline:auto;}
+
+.flashcard{
+  perspective:1400px;
+  margin-bottom:22px;
+  cursor:pointer;
+}
+.flashcard-inner{
+  position:relative;
+  width:100%;
+  height:300px;
+  transform-style:preserve-3d;
+  transition:transform .7s cubic-bezier(.4,0,.2,1);
+}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+
+.face{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  border-radius:24px;
+  padding:34px 28px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.face-front{
+  background:var(--surface);
+}
+.face-back{
+  background:var(--grad);
+  color:#fff;
+  transform:rotateY(180deg);
+  border-color:transparent;
+}
+.face .mini{
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  opacity:.7;
+  margin-bottom:14px;
+}
+.face .content{
+  font-size:clamp(1.05rem,2.6vw,1.35rem);
+  font-weight:800;
+  line-height:1.7;
+  max-height:180px;
+  overflow-y:auto;
+  padding-inline:6px;
+  width:100%;
+}
+.face .content::-webkit-scrollbar{width:5px;}
+.face .content::-webkit-scrollbar-thumb{background:rgba(127,127,127,.4);border-radius:10px;}
+.face .hint{
+  position:absolute;
+  bottom:18px;
+  font-size:.75rem;
+  opacity:.55;
+  font-weight:600;
+}
+
+.flash-controls{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+}
+.f-btn{
+  padding:11px 24px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  font-family:inherit;
+  font-weight:700;
+  font-size:.87rem;
+  cursor:pointer;
+  transition:.28s;
+}
+.f-btn:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);}
+
+.add-card-box{
+  background:var(--surface);
+  border:1px dashed var(--border);
+  border-radius:var(--radius-sm);
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.add-card-box input{
+  padding:12px 16px;
+  border-radius:11px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text);
+  font-family:inherit;
+  font-size:.9rem;
+  outline:none;
+  transition:.25s;
+}
+.add-card-box input:focus{border-color:var(--primary);}
+
+/* ===================== عدّاد الامتحانات ===================== */
+.countdown-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:38px 26px;
+  box-shadow:var(--shadow);
+  max-width:720px;
+  margin-inline:auto;
+  text-align:center;
+}
+.countdown-card label{
+  display:block;
+  font-weight:800;
+  font-size:.9rem;
+  margin-bottom:12px;
+  color:var(--muted);
+}
+.date-input{
+  padding:13px 20px;
+  border-radius:13px;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text);
+  font-family:inherit;
+  font-size:.95rem;
+  font-weight:700;
+  outline:none;
+  cursor:pointer;
+  transition:.25s;
+}
+.date-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 16%,transparent);}
+
+.countdown-display{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(92px,1fr));
+  gap:14px;
+  margin-top:30px;
+}
+.cd-box{
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px 8px;
+  transition:.3s;
+}
+.cd-box:hover{transform:translateY(-4px);border-color:var(--primary);}
+.cd-box .v{
+  font-size:1.95rem;
+  font-weight:900;
+  background:var(--grad);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  font-variant-numeric:tabular-nums;
+  line-height:1.2;
+}
+.cd-box .k{font-size:.76rem;color:var(--muted);font-weight:700;}
+.cd-note{margin-top:20px;font-size:.87rem;color:var(--muted);font-weight:600;}
+
+/* ===================== الاقتباس ===================== */
+.quote-box{
+  max-width:820px;
+  margin-inline:auto;
+  text-align:center;
+  padding:46px 30px;
+  border-radius:26px;
+  background:var(--grad);
+  color:#fff;
+  box-shadow:0 26px 50px -24px rgba(99,102,241,.9);
+  position:relative;
+  overflow:hidden;
+}
+.quote-box::before{
+  content:"❝";
+  position:absolute;
+  top:-30px;inset-inline-start:20px;
+  font-size:9rem;
+  opacity:.13;
+  line-height:1;
+}
+.quote-box p{
+  font-size:clamp(1.05rem,2.6vw,1.4rem);
+  font-weight:800;
+  line-height:1.8;
+  position:relative;
+  z-index:1;
+}
+.quote-box small{
+  display:block;
+  margin-top:16px;
+  font-size:.85rem;
+  opacity:.85;
+  font-weight:600;
+}
+.quote-nav{margin-top:24px;position:relative;z-index:1;}
+.quote-nav button{
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.3);
+  color:#fff;
+  padding:9px 24px;
+  border-radius:100px;
+  font-family:inherit;
+  font-weight:700;
+  font-size:.85rem;
+  cursor:pointer;
+  transition:.28s;
+  backdrop-filter:blur(6px);
+}
+.quote-nav button:hover{background:rgba(255,255,255,.3);transform:translateY(-2px);}
+
+/* ===================== التذييل ===================== */
+footer{
+  border-top:1px solid var(--border);
+  padding:44px 0 30px;
+  margin-top:40px;
+  text-align:center;
+  position:relative;
+  z-index:1;
+}
+footer .f-logo{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:1.1rem;
+  margin-bottom:12px;
+}
+footer p{color:var(--muted);font-size:.86rem;}
+footer .heart{color:var(--danger);}
+
+/* ===================== زر العودة لأعلى ===================== */
+#toTop{
+  position:fixed;
+  inset-inline-start:22px;
+  bottom:22px;
+  width:48px;height:48px;
+  border-radius:14px;
+  border:none;
+  background:var(--grad);
+  color:#fff;
+  font-size:1.15rem;
+  cursor:pointer;
+  box-shadow:0 14px 30px -12px rgba(99,102,241,.95);
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(16px);
+  transition:.35s;
+  z-index:800;
+}
+#toTop.visible{opacity:1;pointer-events:auto;transform:translateY(0);}
+#toTop:hover{transform:translateY(-4px) scale(1.06);}
+
+/* ===================== الإشعارات ===================== */
+.toast{
+  position:fixed;
+  inset-inline-end:24px;
+  bottom:24px;
+  max-width:min(360px,90vw);
+  background:var(--surface);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-inline-start:4px solid var(--primary);
+  border-radius:14px;
+  padding:14px 18px;
+  font-size:.9rem;
+  font-weight:700;
+  box-shadow:var(--shadow);
+  z-index:2000;
+  transform:translateY(140%);
+  opacity:0;
+  transition:transform .45s cubic-bezier(.4,0,.2,1), opacity .35s;
+  pointer-events:none;
+  line-height:1.7;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ===================== أنيميشن الظهور ===================== */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ===================== الاستجابة ===================== */
+@media (max-width:860px){
+  .nav-links{
+    position:absolute;
+    top:100%;
+    inset-inline:0;
+    flex-direction:column;
+    align-items:stretch;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    padding:12px;
+    gap:4px;
+    box-shadow:var(--shadow);
+    display:none;
+  }
+  .nav-links.open{display:flex;}
+  .nav-links a{padding:12px 16px;}
+  .menu-btn{
+    display:grid;place-items:center;
+    width:44px;height:44px;
+    border-radius:13px;
+    border:1px solid var(--border);
+    background:var(--surface-2);
+    color:var(--text);
+    font-size:1.15rem;
+    cursor:pointer;
+  }
+  section{padding:52px 0;}
+  .hero{padding:56px 0 40px;}
+  .timer-card{padding:32px 18px 28px;}
+  .tasks-card{padding:22px 16px;}
+  .face{padding:26px 20px;}
+  .flashcard-inner{height:320px;}
+}
+
+@media (max-width:480px){
+  .hero-btns{flex-direction:column;}
+  .btn{width:100%;justify-content:center;}
+  .timer-btns .t-btn{flex:1;justify-content:center;padding:13px 16px;}
+  .tip{padding:22px 18px;}
+  .toast{inset-inline:16px;max-width:none;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .reveal{opacity:1 !important;transform:none !important;}
+}
+</style>
+</head>
+<body>
+
+<noscript>
+  <style>
+    .reveal{opacity:1 !important;transform:none !important;}
+    .tip{animation:none !important;}
+  </style>
+</noscript>
+
+<div id="scrollProgress"></div>
+
+<!-- ============ الشريط العلوي ============ -->
+<header id="siteHeader">
+  <div class="container nav">
+    <div class="logo">
+      <div class="logo-icon">📚</div>
+      <span>دراستي<b>.</b></span>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">الرئيسية</a></li>
+      <li><a href="#tips">النصائح</a></li>
+      <li><a href="#timer">المؤقت</a></li>
+      <li><a href="#tasks">المهام</a></li>
+      <li><a href="#flashcards">البطاقات</a></li>
+      <li><a href="#countdown">الامتحانات</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-btn" id="themeBtn" aria-label="تبديل الوضع الليلي" title="تبديل الوضع الليلي">🌙</button>
+      <button class="menu-btn" id="menuBtn" aria-label="القائمة">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ الهيرو ============ -->
+<section class="hero" id="home">
+  <div class="container">
+    <div class="badge"><span class="dot"></span> رفيقك الذكي طوال رحلة الدراسة</div>
+    <h1>ذاكر <em>بذكاء</em>،<br>لا تُذاكر لساعات أطول</h1>
+    <p>كل ما تحتاجه لتنظيم وقتك، وتركيز انتباهك، ورفع درجاتك — في مكان واحد. نصائح مجرّبة، مؤقت بومودورو، مهام، وبطاقات مراجعة.</p>
+    <div class="hero-btns">
+      <a href="#timer" class="btn btn-primary">🚀 ابدأ جلسة تركيز</a>
+      <a href="#tips" class="btn btn-ghost">💡 استكشف النصائح</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="num" id="statTips">14</div><div class="lbl">نصيحة دراسية</div></div>
+      <div class="stat"><div class="num" id="statSessions">0</div><div class="lbl">جلسة تركيز لك</div></div>
+      <div class="stat"><div class="num" id="statTasks">0</div><div class="lbl">مهمة مُنجزة</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ النصائح ============ -->
+<section id="tips">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">نصائح ذهبية</span>
+      <h2>نصائح تُغيّر طريقة مذاكرتك</h2>
+      <p>اختر التصنيف الذي يناسبك، وطبّق نصيحة واحدة كل يوم — ستلاحظ الفرق في أسبوع.</p>
+    </div>
+
+    <div class="filters" id="filters">
+      <button class="chip active" data-filter="all">الكل</button>
+      <button class="chip" data-filter="time">تنظيم الوقت</button>
+      <button class="chip" data-filter="memory">الحفظ والتذكر</button>
+      <button class="chip" data-filter="focus">التركيز</button>
+      <button class="chip" data-filter="health">الصحة والنوم</button>
+      <button class="chip" data-filter="exam">الامتحانات</button>
+    </div>
+
+    <div class="tips-grid" id="tipsGrid"></div>
+  </div>
+</section>
+
+<!-- ============ المؤقت ============ -->
+<section id="timer">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">بومودورو</span>
+      <h2>مؤقّت التركيز العميق</h2>
+      <p>اعمل ٢٥ دقيقة بتركيز كامل، ثم خذ راحة ٥ دقائق. بعد ٤ جلسات، خذ راحة طويلة ١٥ دقيقة.</p>
+    </div>
+
+    <div class="timer-card reveal">
+      <div class="modes" id="modes">
+        <button class="mode active" data-mode="focus">تركيز ٢٥</button>
+        <button class="mode" data-mode="short">راحة قصيرة ٥</button>
+        <button class="mode" data-mode="long">راحة طويلة ١٥</button>
+      </div>
+
+      <div class="timer-wrap">
+        <svg class="ring" viewBox="0 0 300 300" aria-hidden="true">
+          <defs>
+            <linearGradient id="gradStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6366f1"/>
+              <stop offset="50%" stop-color="#8b5cf6"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="150" cy="150" r="130"></circle>
+          <circle class="ring-progress" id="ringProgress" cx="150" cy="150" r="130"></circle>
+        </svg>
+        <div class="timer-content">
+          <div id="timerDisplay">25:00</div>
+          <div id="timerLabel">وقت التركيز</div>
+          <div id="sessionCount">الجلسات المكتملة: 0</div>
+        </div>
+      </div>
+
+      <div class="timer-btns">
+        <button class="t-btn main" id="startBtn">▶ ابدأ</button>
+        <button class="t-btn" id="resetBtn">↺ إعادة</button>
+        <button class="t-btn" id="skipBtn">⏭ تخطّي</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ المهام ============ -->
+<section id="tasks">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">قائمة المهام</span>
+      <h2>ماذا ستنجز اليوم؟</h2>
+      <p>دوّن مهامك، جزّئها، وأنجزها واحدة تلو الأخرى. كل مهمة مكتملة = خطوة أقرب لهدفك.</p>
+    </div>
+
+    <div class="tasks-card reveal">
+      <div class="task-input-row">
+        <input type="text" id="taskInput" placeholder="مثال: مراجعة الفصل الثالث في الرياضيات..." maxlength="120" autocomplete="off">
+        <button class="add-btn" id="addTaskBtn">+ إضافة</button>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-top">
+          <span>التقدّم</span>
+          <span id="progressText">0 من 0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <ul id="taskList"></ul>
+
+      <div class="task-footer">
+        <span id="remainingText">لا توجد مهام بعد</span>
+        <button class="clear-btn" id="clearDoneBtn">🗑 حذف المكتملة</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ البطاقات ============ -->
+<section id="flashcards">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">مراجعة نشطة</span>
+      <h2>بطاقات المراجعة السريعة</h2>
+      <p>اضغط على البطاقة لقلبها ورؤية الإجابة. أضف بطاقاتك الخاصة لتختبر نفسك في أي مادة.</p>
+    </div>
+
+    <div class="flash-wrap reveal">
+      <div class="flashcard" id="flashcard">
+        <div class="flashcard-inner">
+          <div class="face face-front">
+            <div class="mini">السؤال</div>
+            <div class="content" id="cardQuestion">اضغط للبدء</div>
+            <div class="hint">اضغط على البطاقة لقلبها</div>
+          </div>
+          <div class="face face-back">
+            <div class="mini">الإجابة</div>
+            <div class="content" id="cardAnswer">—</div>
+            <div class="hint">اضغط مرة أخرى للعودة</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flash-controls">
+        <button class="f-btn" id="prevCard">→ السابق</button>
+        <button class="f-btn" id="nextCard">التالي ←</button>
+        <button class="f-btn" id="shuffleCards">🔀 خلط</button>
+        <button class="f-btn" id="delCard">🗑 حذف</button>
+      </div>
+
+      <div class="add-card-box">
+        <input type="text" id="newQ" placeholder="السؤال / المفهوم..." maxlength="140">
+        <input type="text" id="newA" placeholder="الإجابة / التعريف..." maxlength="220">
+        <button class="add-btn" id="addCardBtn" style="width:100%">+ إضافة بطاقة</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ العدّاد ============ -->
+<section id="countdown">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="sec-tag">عدّاد الامتحانات</span>
+      <h2>كم بقي على امتحانك؟</h2>
+      <p>حدّد تاريخ امتحانك القادم، وشاهد العد التنازلي لحظة بلحظة.</p>
+    </div>
+
+    <div class="countdown-card reveal">
+      <label for="examDate">📅 تاريخ الامتحان</label>
+      <input type="date" id="examDate" class="date-input">
+      <div class="countdown-display">
+        <div class="cd-box"><div class="v" id="cdDays">0</div><div class="k">يوم</div></div>
+        <div class="cd-box"><div class="v" id="cdHours">0</div><div class="k">ساعة</div></div>
+        <div class="cd-box"><div class="v" id="cdMins">0</div><div class="k">دقيقة</div></div>
+        <div class="cd-box"><div class="v" id="cdSecs">0</div><div class="k">ثانية</div></div>
+      </div>
+      <div class="cd-note" id="cdNote">اختر تاريخاً للبدء ⏳</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ الاقتباس ============ -->
+<section style="padding-top:20px;">
+  <div class="container">
+    <div class="quote-box reveal">
+      <p id="quoteText">النجاح ليس صدفة، بل نتيجة جهد صغير يتكرر كل يوم.</p>
+      <small id="quoteAuthor">— دراستي</small>
+      <div class="quote-nav">
+        <button id="newQuote">اقتباس آخر ✨</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ التذييل ============ -->
+<footer>
+  <div class="container">
+    <div class="f-logo">
+      <div class="logo-icon" style="width:36px;height:36px;font-size:1rem;">📚</div>
+      دراستي
+    </div>
+    <p>صُنع بـ <span class="heart">❤</span> لمساعدة الطلاب على المذاكرة بذكاء.</p>
+    <p style="margin-top:8px;font-size:.8rem;">جميع بياناتك محفوظة على جهازك فقط ولا تُرسل لأي مكان.</p>
+  </div>
+</footer>
+
+<button id="toTop" aria-label="العودة لأعلى">↑</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   0) تخزين محلي آمن (لا يكسر الصفحة إن كان معطلاً)
+   ============================================================ */
+const storage = {
+  get(key, fallback){
+    try {
+      const v = localStorage.getItem(key);
+      return v === null ? fallback : v;
+    } catch(e){ return fallback; }
+  },
+  set(key, value){
+    try { localStorage.setItem(key, value); } catch(e){}
+  },
+  getJSON(key, fallback){
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      const parsed = JSON.parse(raw);
+      return parsed === null ? fallback : parsed;
+    } catch(e){ return fallback; }
+  }
+};
+
+/* ============================================================
+   1) الوضع الليلي
+   ============================================================ */
+const root = document.documentElement;
+const themeBtn = document.getElementById('themeBtn');
+
+function applyTheme(theme){
+  root.setAttribute('data-theme', theme);
+  themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  storage.set('study_theme', theme);
+}
+const savedTheme = storage.get('study_theme',
+  (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'
+);
+applyTheme(savedTheme);
+
+themeBtn.addEventListener('click', () => {
+  applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+
+/* ============================================================
+   2) القائمة في الموبايل + شريط التقدم + زر العودة
+   ============================================================ */
+const menuBtn = document.getElementById('menuBtn');
+const navLinks = document.getElementById('navLinks');
+menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a =>
+  a.addEventListener('click', () => navLinks.classList.remove('open'))
+);
+
+const scrollProgress = document.getElementById('scrollProgress');
+const siteHeader = document.getElementById('siteHeader');
+const toTop = document.getElementById('toTop');
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop;
+  const total = h.scrollHeight - h.clientHeight;
+  scrollProgress.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
+  siteHeader.classList.toggle('scrolled', scrolled > 10);
+  toTop.classList.toggle('visible', scrolled > 500);
+}, { passive: true });
+
+toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+/* ============================================================
+   3) إشعارات Toast
+   ============================================================ */
+let toastTimer = null;
+function showToast(message){
+  const t = document.getElementById('toast');
+  t.textContent = message;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3600);
+}
+
+/* ============================================================
+   4) بيانات النصائح
+   ============================================================ */
+const tipsData = [
+  { icon:'⏱️', cat:'time', title:'تقنية بومودورو',
+    text:'اعمل ٢٥ دقيقة بتركيز تام، ثم ارتح ٥ دقائق. بعد ٤ جلسات خذ راحة طويلة. هذه الدورة تحافظ على نشاط دماغك وتمنع الإرهاق.' },
+  { icon:'🧩', cat:'time', title:'جزّئ المهام الكبيرة',
+    text:'بدل «أذاكر الفصل كله»، اجعلها: «أقرأ ٥ صفحات + أحل ٣ تمارين». المهام الصغيرة تُنجز أسرع وتمنحك دافعاً للاستمرار.' },
+  { icon:'📅', cat:'time', title:'خطة أسبوعية مكتوبة',
+    text:'خصّص ١٠ دقائق كل يوم أحد لكتابة خطة الأسبوع. الخطة المكتوبة ترفع الالتزام وتُقلل من قرارات «ماذا أذاكر الآن؟».' },
+  { icon:'🔄', cat:'memory', title:'الاسترجاع النشط',
+    text:'أغمض الكتاب وحاول تذكّر ما قرأته بصوت عالٍ أو بالكتابة. استدعاء المعلومة من ذاكرتك أقوى بمرات من إعادة قراءتها.' },
+  { icon:'📈', cat:'memory', title:'التكرار المتباعد',
+    text:'راجع المادة بعد يوم، ثم بعد ٣ أيام، ثم بعد أسبوع. هذا التباعد يثبّت المعلومة في الذاكرة طويلة المدى ويقاوم النسيان.' },
+  { icon:'🗺️', cat:'memory', title:'الخرائط الذهنية',
+    text:'حوّل الفصل إلى خريطة بسيطة: فكرة مركزية + فروع. الرسم يُفعّل نصفَي الدماغ ويجعل المعلومة أسهل استحضاراً.' },
+  { icon:'🌙', cat:'memory', title:'راجع قبل النوم',
+    text:'خمس دقائق مراجعة سريعة قبل النوم تجعل الدماغ يعالج المعلومة أثناء النوم، فيثبّتها دون مجهود إضافي.' },
+  { icon:'📵', cat:'focus', title:'بيئة بلا مشتتات',
+    text:'ضع الهاتف في غرفة أخرى أو على وضع الطيران. مجرد وجود الهاتف بجانبك يستهلك جزءاً من انتباهك حتى لو لم تلمسه.' },
+  { icon:'🚀', cat:'focus', title:'قاعدة الخمس دقائق',
+    text:'لا تشعر بالحماس للبدء؟ قل لنفسك: «سأذاكر ٥ دقائق فقط». أغلب الوقت ستكمل بعدها لأن البداية هي العقبة الوحيدة.' },
+  { icon:'😴', cat:'health', title:'النوم سلاحك الأول',
+    text:'٧ إلى ٩ ساعات نوم تُثبّت ما درسته. السهر ليلة الامتحان يمحو جزءاً كبيراً من المعلومات التي حفظتها نهاراً.' },
+  { icon:'💧', cat:'health', title:'ماء وحركة',
+    text:'اشرب ماءً بانتظام وقف وامشِ دقيقتين كل ٣٠ دقيقة. الجفاف وقلة الحركة من أكبر أسباب ضعف التركيز والصداع.' },
+  { icon:'📝', cat:'exam', title:'حل امتحانات سابقة',
+    text:'حل نماذج الأعوام الماضية بتوقيت حقيقي. هذا يدرّبك على صيغة الأسئلة ويُقلل رهبة الامتحان بشكل كبير.' },
+  { icon:'🧘', cat:'exam', title:'لا للحشو الليلة الأخيرة',
+    text:'المراجعة المكثفة قبل الامتحان بساعات تزيد القلق وتُشوّش الذاكرة. راجع عناوين عريضة فقط وثِق بما درسته.' },
+  { icon:'✍️', cat:'exam', title:'اقرأ السؤال مرتين',
+    text:'قبل الإجابة، اقرأ السؤال مرتين وحدّد الكلمات المفتاحية. كثير من الأخطاء سببها قراءة متسرعة لا نقص في المعرفة.' }
+];
+
+const tipsGrid = document.getElementById('tipsGrid');
+const catNames = { time:'تنظيم الوقت', memory:'الحفظ والتذكر', focus:'التركيز', health:'الصحة والنوم', exam:'الامتحانات' };
+
+function renderTips(filter = 'all'){
+  tipsGrid.innerHTML = '';
+  const list = (filter === 'all') ? tipsData : tipsData.filter(t => t.cat === filter);
+
+  list.forEach((t, i) => {
+    const el = document.createElement('article');
+    el.className = 'tip';
+    el.style.animationDelay = (i * 45) + 'ms';
+    el.innerHTML = `
+      <div class="tip-icon">${t.icon}</div>
+      <h3>${t.title}</h3>
+      <p>${t.text}</p>
+      <span class="tag">${catNames[t.cat]}</span>
+    `;
+    tipsGrid.appendChild(el);
+  });
+}
+renderTips();
+document.getElementById('statTips').textContent = tipsData.length;
+
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.chip');
+  if (!btn) return;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderTips(btn.dataset.filter);
+});
+
+/* ============================================================
+   5) مؤقّت بومودورو (دقيق حتى مع تبديل التبويب)
+   ============================================================ */
+const MODES = {
+  focus: { seconds: 25 * 60, label: 'وقت التركيز' },
+  short: { seconds: 5 * 60,  label: 'راحة قصيرة' },
+  long:  { seconds: 15 * 60, label: 'راحة طويلة' }
+};
+
+let currentMode = 'focus';
+let totalSeconds = MODES.focus.seconds;
+let remaining = totalSeconds;
+let timerId = null;
+let isRunning = false;
+let endTime = 0;
+
+const timerDisplay = document.getElementById('timerDisplay');
+const timerLabel = document.getElementById('timerLabel');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+const skipBtn = document.getElementById('skipBtn');
+const modesBox = document.getElementById('modes');
+const sessionCountEl = document.getElementById('sessionCount');
+const ringProgress = document.getElementById('ringProgress');
+
+const CIRCUMFERENCE = 2 * Math.PI * 130;
+ringProgress.style.strokeDasharray = CIRCUMFERENCE + ' ' + CIRCUMFERENCE;
+
+let completedSessions = parseInt(storage.get('study_sessions', '0'), 10);
+if (isNaN(completedSessions)) completedSessions = 0;
+sessionCountEl.textContent = `الجلسات المكتملة: ${completedSessions}`;
+document.getElementById('statSessions').textContent = completedSessions;
+
+function formatTime(s){
+  const m = Math.floor(s / 60).toString().padStart(2, '0');
+  const sec = (s % 60).toString().padStart(2, '0');
+  return `${m}:${sec}`;
+}
+
+function updateTimerUI(){
+  timerDisplay.textContent = formatTime(remaining);
+  const progress = 1 - (remaining / totalSeconds);
+  ringProgress.style.strokeDashoffset = (CIRCUMFERENCE * progress).toFixed(2);
+  document.title = isRunning
+    ? `${formatTime(remaining)} • ${MODES[currentMode].label} — دراستي`
+    : 'دراستي | منصتك الاحترافية للمذاكرة الذكية';
+}
+
+function playBeep(times = 2){
+  try{
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    for (let i = 0; i < times; i++){
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 880;
+      const t0 = ctx.currentTime + i * 0.42;
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.28, t0 + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.34);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t0);
+      osc.stop(t0 + 0.36);
+    }
+    setTimeout(() => { try{ ctx.close(); }catch(e){} }, 1800);
+  }catch(e){ /* تجاهل */ }
+}
+
+function setMode(mode){
+  clearInterval(timerId);
+  isRunning = false;
+  currentMode = mode;
+  totalSeconds = MODES[mode].seconds;
+  remaining = totalSeconds;
+  timerLabel.textContent = MODES[mode].label;
+  startBtn.innerHTML = '▶ ابدأ';
+  document.querySelectorAll('.mode').forEach(m =>
+    m.classList.toggle('active', m.dataset.mode === mode)
+  );
+  updateTimerUI();
+}
+
+function startTimer(){
+  if (isRunning) return;
+  if (remaining <= 0) remaining = totalSeconds;
+  isRunning = true;
+  startBtn.innerHTML = '⏸ إيقاف مؤقت';
+  endTime = Date.now() + remaining * 1000;
+  clearInterval(timerId);
+  timerId = setInterval(timerTick, 250);
+}
+
+function pauseTimer(){
+  if (!isRunning) return;
+  remaining = Math.max(0, Math.round((endTime - Date.now()) / 1000));
+  clearInterval(timerId);
+  isRunning = false;
+  startBtn.innerHTML = '▶ استئناف';
+  updateTimerUI();
+}
+
+function finishSession(){
+  clearInterval(timerId);
+  isRunning = false;
+  remaining = 0;
+  updateTimerUI();
+  playBeep(3);
+  startBtn.innerHTML = '▶ ابدأ';
+
+  if (currentMode === 'focus'){
+    completedSessions++;
+    storage.set('study_sessions', String(completedSessions));
+    sessionCountEl.textContent = `الجلسات المكتملة: ${completedSessions}`;
+    document.getElementById('statSessions').textContent = completedSessions;
+    showToast('🎉 أحسنت! أكملت جلسة تركيز — خذ راحة قصيرة الآن.');
+    setTimeout(() => setMode('short'), 1000);
+  } else {
+    showToast('⏰ انتهت الراحة — لنعد إلى التركيز!');
+    setTimeout(() => setMode('focus'), 1000);
+  }
+}
+
+function timerTick(){
+  remaining = Math.max(0, Math.round((endTime - Date.now()) / 1000));
+  if (remaining <= 0){
+    finishSession();
+    return;
+  }
+  updateTimerUI();
+}
+
+startBtn.addEventListener('click', () => isRunning ? pauseTimer() : startTimer());
+
+resetBtn.addEventListener('click', () => {
+  clearInterval(timerId);
+  isRunning = false;
+  remaining = totalSeconds;
+  startBtn.innerHTML = '▶ ابدأ';
+  updateTimerUI();
+});
+
+skipBtn.addEventListener('click', () => {
+  clearInterval(timerId);
+  isRunning = false;
+  remaining = 0;
+  updateTimerUI();
+  showToast(currentMode === 'focus' ? 'تم تخطّي جلسة التركيز.' : 'تم تخطّي الراحة.');
+  setTimeout(() => setMode(currentMode === 'focus' ? 'short' : 'focus'), 500);
+});
+
+modesBox.addEventListener('click', e => {
+  const btn = e.target.closest('.mode');
+  if (!btn) return;
+  setMode(btn.dataset.mode);
+});
+
+updateTimerUI();
+
+/* ============================================================
+   6) قائمة المهام
+   ============================================================ */
+const taskInput = document.getElementById('taskInput');
+const addTaskBtn = document.getElementById('addTaskBtn');
+const taskList = document.getElementById('taskList');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const remainingText = document.getElementById('remainingText');
+const clearDoneBtn = document.getElementById('clearDoneBtn');
+
+let tasks = storage.getJSON('study_tasks', []);
+if (!Array.isArray(tasks)) tasks = [];
+
+function saveTasks(){ storage.set('study_tasks', JSON.stringify(tasks)); }
+
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function renderTasks(){
+  taskList.innerHTML = '';
+
+  if (tasks.length === 0){
+    const empty = document.createElement('li');
+    empty.className = 'empty';
+    empty.innerHTML = '<span class="big">📝</span>لا توجد مهام بعد — أضف أول مهمة وابدأ الآن!';
+    taskList.appendChild(empty);
+  } else {
+    tasks.forEach(task => {
+      const li = document.createElement('li');
+      li.className = 'task' + (task.done ? ' done' : '');
+      li.innerHTML = `
+        <input type="checkbox" ${task.done ? 'checked' : ''} aria-label="إكمال المهمة">
+        <span>${escapeHtml(task.text)}</span>
+        <button class="del-btn" aria-label="حذف المهمة">✕</button>
+      `;
+
+      li.querySelector('input').addEventListener('change', () => {
+        task.done = !task.done;
+        saveTasks();
+        renderTasks();
+      });
+
+      li.querySelector('.del-btn').addEventListener('click', () => {
+        tasks = tasks.filter(t => t.id !== task.id);
+        saveTasks();
+        renderTasks();
+      });
+
+      taskList.appendChild(li);
+    });
+  }
+
+  const done = tasks.filter(t => t.done).length;
+  const total = tasks.length;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+
+  progressFill.style.width = pct + '%';
+  progressText.textContent = `${done} من ${total}`;
+  remainingText.textContent = total === 0
+    ? 'لا توجد مهام بعد'
+    : (done === total ? '🎉 أنجزت كل مهامك!' : `متبقّي ${total - done} مهمة`);
+
+  document.getElementById('statTasks').textContent = done;
+}
+
+function addTask(){
+  const text = taskInput.value.trim();
+  if (!text) {
+    showToast('اكتب نص المهمة أولاً ✍️');
+    taskInput.focus();
+    return;
+  }
+  tasks.push({ id: Date.now() + Math.random(), text, done: false });
+  taskInput.value = '';
+  saveTasks();
+  renderTasks();
+  taskInput.focus();
+}
+
+addTaskBtn.addEventListener('click', addTask);
+taskInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+
+clearDoneBtn.addEventListener('click', () => {
+  const before = tasks.length;
+  tasks = tasks.filter(t => !t.done);
+  if (tasks.length === before){
+    showToast('لا توجد مهام مكتملة لحذفها.');
+    return;
+  }
+  saveTasks();
+  renderTasks();
+  showToast('تم حذف المهام المكتملة 🗑');
+});
+
+renderTasks();
+
+/* ============================================================
+   7) البطاقات التعليمية
+   ============================================================ */
+const defaultCards = [
+  { q:'ما هو "الاسترجاع النشط"؟', a:'محاولة تذكّر المعلومة من ذاكرتك دون النظر إلى المصدر — وهو أقوى وسيلة لتثبيت المعلومات.' },
+  { q:'كم مدة جلسة بومودورو الواحدة؟', a:'٢٥ دقيقة تركيز كامل، تتبعها ٥ دقائق راحة. وبعد ٤ جلسات، راحة طويلة ١٥ دقيقة.' },
+  { q:'ما هو "التكرار المتباعد"؟', a:'مراجعة المادة على فترات متباعدة (يوم، ٣ أيام، أسبوع) بدلاً من مراجعتها كلها في ليلة واحدة.' },
+  { q:'ما أفضل وقت لمراجعة سريعة؟', a:'قبل النوم مباشرة — لأن الدماغ يعالج المعلومات ويثبّتها أثناء النوم.' },
+  { q:'ماذا تفعل إذا شعرت بالتشتت أثناء المذاكرة؟', a:'قف وامشِ دقيقتين، اشرب ماءً، ثم عُد واكتب أول خطوة صغيرة تريد إنجازها.' },
+  { q:'كيف تحضّر للامتحان في أسبوع؟', a:'قسّم المادة على الأيام، راجع بالاسترجاع النشط، وحل نموذج امتحان كامل قبل يومين من الموعد.' }
+];
+
+let cards = storage.getJSON('study_cards', null);
+if (!Array.isArray(cards) || cards.length === 0) cards = defaultCards.map(c => ({...c}));
+
+let cardIndex = 0;
+const flashcard = document.getElementById('flashcard');
+const cardQuestion = document.getElementById('cardQuestion');
+const cardAnswer = document.getElementById('cardAnswer');
+
+function saveCards(){ storage.set('study_cards', JSON.stringify(cards)); }
+
+function renderCard(){
+  flashcard.classList.remove('flipped');
+  if (cards.length === 0){
+    cardQuestion.textContent = 'لا توجد بطاقات — أضف بطاقة جديدة بالأسفل';
+    cardAnswer.textContent = '—';
+    return;
+  }
+  if (cardIndex >= cards.length) cardIndex = 0;
+  if (cardIndex < 0) cardIndex = cards.length - 1;
+  cardQuestion.textContent = cards[cardIndex].q;
+  cardAnswer.textContent = cards[cardIndex].a;
+}
+
+flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
+
+document.getElementById('nextCard').addEventListener('click', () => {
+  if (!cards.length) { showToast('لا توجد بطاقات بعد.'); return; }
+  cardIndex = (cardIndex + 1) % cards.length;
+  renderCard();
+});
+
+document.getElementById('prevCard').addEventListener('click', () => {
+  if (!cards.length) { showToast('لا توجد بطاقات بعد.'); return; }
+  cardIndex = (cardIndex - 1 + cards.length) % cards.length;
+  renderCard();
+});
+
+document.getElementById('shuffleCards').addEventListener('click', () => {
+  if (cards.length < 2) { showToast('تحتاج بطاقتين على الأقل للخلط.'); return; }
+  for (let i = cards.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  cardIndex = 0;
+  saveCards();
+  renderCard();
+  showToast('تم خلط البطاقات 🔀');
+});
+
+document.getElementById('delCard').addEventListener('click', () => {
+  if (!cards.length) { showToast('لا توجد بطاقة لحذفها.'); return; }
+  if (!confirm('هل تريد حذف هذه البطاقة؟')) return;
+  cards.splice(cardIndex, 1);
+  if (cardIndex >= cards.length) cardIndex = Math.max(0, cards.length - 1);
+  saveCards();
+  renderCard();
+  showToast('تم حذف البطاقة 🗑');
+});
+
+document.getElementById('addCardBtn').addEventListener('click', () => {
+  const q = document.getElementById('newQ').value.trim();
+  const a = document.getElementById('newA').value.trim();
+  if (!q || !a) { showToast('يرجى كتابة السؤال والإجابة معاً.'); return; }
+  cards.push({ q, a });
+  saveCards();
+  document.getElementById('newQ').value = '';
+  document.getElementById('newA').value = '';
+  cardIndex = cards.length - 1;
+  renderCard();
+  showToast('تمت إضافة البطاقة بنجاح ✅');
+});
+
+renderCard();
+
+/* ============================================================
+   8) عدّاد الامتحانات
+   ============================================================ */
+const examDate = document.getElementById('examDate');
+const cdDays = document.getElementById('cdDays');
+const cdHours = document.getElementById('cdHours');
+const cdMins = document.getElementById('cdMins');
+const cdSecs = document.getElementById('cdSecs');
+const cdNote = document.getElementById('cdNote');
+
+const savedDate = storage.get('study_exam', '');
+if (savedDate) examDate.value = savedDate;
+
+function updateCountdown(){
+  if (!examDate.value){
+    cdDays.textContent = cdHours.textContent = cdMins.textContent = cdSecs.textContent = '0';
+    cdNote.textContent = 'اختر تاريخاً للبدء ⏳';
+    return;
+  }
+
+  const target = new Date(examDate.value + 'T08:00:00').getTime();
+  if (isNaN(target)){
+    cdNote.textContent = 'تاريخ غير صالح — اختر تاريخاً صحيحاً.';
+    return;
+  }
+
+  const diff = target - Date.now();
+
+  if (diff <= 0){
+    cdDays.textContent = cdHours.textContent = cdMins.textContent = cdSecs.textContent = '0';
+    cdNote.textContent = '🎯 حان موعد الامتحان — بالتوفيق! أنت قادر بإذن الله.';
+    return;
+  }
+
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+
+  cdDays.textContent = d;
+  cdHours.textContent = String(h).padStart(2, '0');
+  cdMins.textContent = String(m).padStart(2, '0');
+  cdSecs.textContent = String(s).padStart(2, '0');
+
+  cdNote.textContent = d > 14
+    ? 'لديك متسع من الوقت — ابدأ بالمادة الأصعب أولاً 💪'
+    : d > 7
+      ? 'أسبوعان تقريباً — وزّع المراجعة على الأيام ⏳'
+      : d > 3
+        ? 'الوقت يقترب — ركّز على حل النماذج 🔥'
+        : 'أيام قليلة — مراجعة مركّزة وثقة بالله 🌟';
+}
+
+examDate.addEventListener('change', () => {
+  storage.set('study_exam', examDate.value);
+  updateCountdown();
+});
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+/* ============================================================
+   9) الاقتباسات
+   ============================================================ */
+const quotes = [
+  { t:'النجاح ليس صدفة، بل نتيجة جهد صغير يتكرر كل يوم.', a:'دراستي' },
+  { t:'لا تنتظر الإلهام، ابدأ وسيأتي الإلهام أثناء العمل.', a:'حكمة' },
+  { t:'التعليم أقوى سلاح يمكنك استخدامه لتغيير العالم.', a:'نيلسون مانديلا' },
+  { t:'الطريقة الوحيدة للقيام بعمل عظيم هي أن تحب ما تفعله.', a:'ستيف جوبز' },
+  { t:'المعرفة كنز لا ينفد، وكل صفحة تقرأها تزيدك غنى.', a:'حكمة' },
+  { t:'الفشل ليس عكس النجاح، بل جزء منه.', a:'حكمة' },
+  { t:'من جدّ وجد، ومن زرع حصد.', a:'مثل عربي' },
+  { t:'لا يوجد شخص فاشل، بل شخص لم يجد طريقته بعد.', a:'حكمة' },
+  { t:'العلم في الصغر كالنقش على الحجر.', a:'مثل عربي' },
+  { t:'استثمر في نفسك، فهو أفضل استثمار ستقوم به.', a:'حكمة' }
+];
+
+const quoteText = document.getElementById('quoteText');
+const quoteAuthor = document.getElementById('quoteAuthor');
+let quoteIdx = Math.floor(Math.random() * quotes.length);
+
+function showQuote(){
+  quoteText.textContent = quotes[quoteIdx].t;
+  quoteAuthor.textContent = '— ' + quotes[quoteIdx].a;
+}
+showQuote();
+
+document.getElementById('newQuote').addEventListener('click', () => {
+  let next = quoteIdx;
+  while (next === quoteIdx && quotes.length > 1){
+    next = Math.floor(Math.random() * quotes.length);
+  }
+  quoteIdx = next;
+  showQuote();
+});
+
+/* ============================================================
+   10) ظهور العناصر عند التمرير
+   ============================================================ */
+const revealEls = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+} else {
+  revealEls.forEach(el => el.classList.add('visible'));
+}
+
+/* ============================================================
+   11) اختصار المسافة: تشغيل/إيقاف المؤقت
+   ============================================================ */
+document.addEventListener('keydown', e => {
+  const tag = (document.activeElement && document.activeElement.tagName) || '';
+  if (e.code === 'Space' && tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'BUTTON'){
+    e.preventDefault();
+    if (isRunning) pauseTimer(); else startTimer();
+  }
+});
+</script>
+</body>
+</html>
